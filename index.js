@@ -21,7 +21,16 @@ exports.handler = async (event) => {
   const filtered_job_titles = all_job_titles.filter(row => row.prospect_code === program_code);
 
   // Reduce the job titles data structure to something more usable.
-  const reduced_job_titles = filtered_job_titles.reduce((accumulator, current) => accumulator.concat([current]), []);
+  const reduced_job_titles = filtered_job_titles.reduce((accumulator, current) => accumulator.concat([current['job_titles']]), []);
+
+  // Filter out any unnecessary outlooks information.
+  filtered_job_outlooks.forEach(outlook => {
+    for (const property in outlook) {
+      if (property !== 'occ_title' && property !== 'tot_emp' && property !== 'employment_change') {
+        delete outlook[property];
+      }
+    }
+  });
 
   return {
     statusCode: 200,
